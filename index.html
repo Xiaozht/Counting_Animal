@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小动物数数乐园</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 700px;
+            width: 95%;
+            text-align: center;
+            position: relative;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .score-board {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 20px;
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .question {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .number-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            font-size: 2em;
+            flex-wrap: wrap;
+        }
+
+        .animal-group {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px;
+            border-radius: 15px;
+            min-width: 120px;
+        }
+
+        .animal-emoji {
+            font-size: 2.5em;
+            margin: 5px;
+            display: inline-block;
+            animation: bounce 1.5s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(-10deg); }
+            75% { transform: translateY(-10px) rotate(10deg); }
+        }
+
+        .animal-wiggle {
+            animation: wiggle 2s ease-in-out infinite;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-15deg); }
+            50% { transform: rotate(15deg); }
+        }
+
+        .animal-hop {
+            animation: hop 1.8s ease-in-out infinite;
+        }
+
+        @keyframes hop {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-15px) scale(1.1); }
+        }
+
+        .animal-spin {
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(1.1); }
+            50% { transform: rotate(180deg) scale(1); }
+            75% { transform: rotate(270deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .animal-swing {
+            animation: swing 2s ease-in-out infinite;
+            transform-origin: top center;
+        }
+
+        @keyframes swing {
+            0%, 100% { transform: rotate(10deg); }
+            50% { transform: rotate(-10deg); }
+        }
+
+        .plus-sign {
+            font-size: 1.5em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .equals-sign {
+            font-size: 1.5em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 2em;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .option-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .option-btn:active {
+            transform: scale(0.95);
+        }
+
+        .option-btn.correct {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        .option-btn.wrong {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%) !important;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .message {
+            margin-top: 30px;
+            font-size: 1.8em;
+            font-weight: bold;
+            min-height: 50px;
+        }
+
+        .message.success {
+            color: #11998e;
+        }
+
+        .message.error {
+            color: #eb3349;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            font-size: 1.5em;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .next-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f093fb;
+            animation: confetti-fall 3s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🐰 小动物数数乐园 🐱</h1>
+
+        <div class="score-board">
+            ⭐ 得分：<span id="score">0</span>
+        </div>
+
+        <!-- 背景音乐控制 -->
+        <div style="margin-bottom: 20px;">
+            <button id="music-btn" class="option-btn" style="padding: 10px 20px; font-size: 1em;" onclick="toggleMusic()">
+                🔇 音乐关
+            </button>
+        </div>
+
+        <div class="question">
+            <div class="number-display" id="question-display">
+                <!-- 问题将在这里显示 -->
+            </div>
+        </div>
+
+        <div class="options" id="options-container">
+            <!-- 选项将在这里显示 -->
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">下一题 ➜</button>
+    </div>
+
+    <script>
+        // 游戏状态
+        let score = 0;
+        let currentAnswer = 0;
+        let currentQuestionNum = 0;
+        const totalQuestions = 5;
+        const animals = ['🐰', '🐱', '🐶', '🐸', '🐻', '🐼', '🐨', '🐯', '🦁', '🐷'];
+        const animations = ['bounce', 'wiggle', 'hop', 'spin', 'swing'];
+
+        // 背景音乐
+        let musicPlaying = false;
+        const backgroundMusic = new Audio('backgroundmusicforvideos-happy-cute-kids-522388.mp3');
+        backgroundMusic.loop = true;
+        backgroundMusic.volume = 0.3; // 音量 30%
+
+        // 切换音乐开关
+        function toggleMusic() {
+            const musicBtn = document.getElementById('music-btn');
+            if (musicPlaying) {
+                backgroundMusic.pause();
+                musicBtn.textContent = '🔇 音乐关';
+                musicPlaying = false;
+            } else {
+                backgroundMusic.play().then(() => {
+                    musicBtn.textContent = '🔊 音乐开';
+                    musicPlaying = true;
+                }).catch(err => {
+                    console.log('音频播放失败:', err);
+                    musicBtn.textContent = '❌ 无法播放';
+                });
+            }
+        }
+
+        // 生成随机数
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // 生成题目
+        function generateQuestion() {
+            if (currentQuestionNum >= totalQuestions) {
+                showFinalResult();
+                return;
+            }
+
+            currentQuestionNum++;
+            const num1 = getRandomNumber(1, 5);
+            const num2 = getRandomNumber(1, 5);
+            currentAnswer = num1 + num2;
+
+            const animal = animals[getRandomNumber(0, animals.length - 1)];
+            const animation1 = animations[getRandomNumber(0, animations.length - 1)];
+            const animation2 = animations[getRandomNumber(0, animations.length - 1)];
+
+            // 显示进度
+            const progressText = `<div style="color: #667eea; font-size: 0.5em; margin-bottom: 10px;">第 ${currentQuestionNum} / ${totalQuestions} 题</div>`;
+
+            // 显示问题
+            const display = document.getElementById('question-display');
+            display.innerHTML = `
+                ${progressText}
+                <div class="animal-group">
+                    ${Array(num1).fill(`<span class="animal-emoji animal-${animation1}">${animal}</span>`).join('')}
+                </div>
+                <span class="plus-sign">+</span>
+                <div class="animal-group">
+                    ${Array(num2).fill(`<span class="animal-emoji animal-${animation2}">${animal}</span>`).join('')}
+                </div>
+                <span class="equals-sign">=</span>
+                <span class="equals-sign">?</span>
+            `;
+
+            // 生成选项（包含正确答案和 2 个错误答案）
+            const options = generateOptions(currentAnswer);
+            displayOptions(options);
+        }
+
+        // 生成选项
+        function generateOptions(correct) {
+            const options = [correct];
+
+            while (options.length < 3) {
+                const wrong = getRandomNumber(2, 10);
+                if (!options.includes(wrong)) {
+                    options.push(wrong);
+                }
+            }
+
+            // 打乱选项顺序
+            return options.sort(() => Math.random() - 0.5);
+        }
+
+        // 显示选项
+        function displayOptions(options) {
+            const container = document.getElementById('options-container');
+            container.innerHTML = options.map(opt =>
+                `<button class="option-btn" onclick="checkAnswer(${opt}, this)">${opt}</button>`
+            ).join('');
+        }
+
+        // 检查答案
+        function checkAnswer(selected, btn) {
+            const message = document.getElementById('message');
+            const buttons = document.querySelectorAll('.option-btn');
+
+            // 禁用所有按钮
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (selected === currentAnswer) {
+                // 正确答案
+                btn.classList.add('correct');
+                message.textContent = '🎉 太棒了！答对了！';
+                message.className = 'message success';
+                score += 10;
+                document.getElementById('score').textContent = score;
+                createConfetti();
+            } else {
+                // 错误答案
+                btn.classList.add('wrong');
+                message.textContent = `😅 再想想哦！正确答案是 ${currentAnswer}`;
+                message.className = 'message error';
+
+                // 显示正确答案
+                buttons.forEach(btn => {
+                    if (parseInt(btn.textContent) === currentAnswer) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+
+            // 显示下一题按钮
+            document.getElementById('next-btn').style.display = 'inline-block';
+        }
+
+        // 下一题
+        function nextQuestion() {
+            document.getElementById('message').textContent = '';
+            document.getElementById('message').className = 'message';
+            document.getElementById('next-btn').style.display = 'none';
+            generateQuestion();
+        }
+
+        // 显示最终结果
+        function showFinalResult() {
+            const display = document.getElementById('question-display');
+            const container = document.getElementById('options-container');
+
+            display.innerHTML = `
+                <div style="font-size: 0.6em; color: #667eea; margin-bottom: 20px;">游戏结束！</div>
+                <div style="font-size: 3em; margin: 20px;">🏆</div>
+                <div style="font-size: 1.5em; color: #667eea;">
+                    总分：<strong style="color: #f5576c;">${score}</strong> / ${totalQuestions * 10}
+                </div>
+                <div style="font-size: 1.2em; margin-top: 15px; color: #888;">
+                    答对 ${Math.floor(score / 10)} / ${totalQuestions} 题
+                </div>
+            `;
+
+            container.innerHTML = `
+                <button class="option-btn" onclick="restartGame()" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                    🎮 再玩一次
+                </button>
+            `;
+
+            document.getElementById('message').textContent = '';
+            document.getElementById('next-btn').style.display = 'none';
+            createConfetti();
+        }
+
+        // 重新开始游戏
+        function restartGame() {
+            score = 0;
+            currentQuestionNum = 0;
+            document.getElementById('score').textContent = '0';
+            document.getElementById('message').textContent = '';
+            document.getElementById('message').className = 'message';
+            document.getElementById('next-btn').style.display = 'none';
+            generateQuestion();
+        }
+
+        // 创建彩带效果
+        function createConfetti() {
+            const colors = ['#f093fb', '#667eea', '#764ba2', '#f5576c', '#11998e', '#38ef7d'];
+
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                document.body.appendChild(confetti);
+
+                // 自动移除
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+
+        // 开始游戏
+        generateQuestion();
+    </script>
+</body>
+</html>
