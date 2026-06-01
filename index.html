@@ -78,6 +78,7 @@
             padding: 20px;
             border-radius: 15px;
             min-width: 120px;
+            text-align: center;
         }
 
         .animal-emoji {
@@ -267,13 +268,45 @@
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
+            width: 100%;
+            height: 100%;
             z-index: 1000;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            background: rgba(0, 0, 0, 0.5);
+            text-align: center;
+            gap: 15px;
+        }
+
+        #start-screen h1 {
+            color: white;
+            font-size: 2em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        #start-screen .music-icon {
+            font-size: 5em;
+            margin: 10px 0;
+        }
+
+        #start-screen .start-text {
+            font-size: 1.3em;
+            color: white;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        #start-screen .start-button {
+            margin: 10px 0;
+        }
+
+        #start-screen .start-button button {
+            padding: 20px 60px !important;
+            font-size: 1.5em !important;
         }
     </style>
     <!-- 移动端适配 -->
@@ -396,13 +429,15 @@
 </head>
 <body>
     <!-- 开始界面 -->
-    <div class="game-container" id="start-screen">
+    <div id="start-screen">
         <h1>🐰 小动物数数乐园 🐱</h1>
-        <div style="font-size: 4em; margin: 30px;">🎵</div>
-        <p style="font-size: 1.5em; color: #667eea; margin-bottom: 30px;">点击开始游戏！</p>
-        <button class="option-btn" onclick="startGame()" style="padding: 20px 60px; font-size: 1.5em;">
-            🎮 开始游戏
-        </button>
+        <div class="music-icon">🎵</div>
+        <p class="start-text">点击开始游戏！</p>
+        <div class="start-button">
+            <button class="option-btn" onclick="startGame()" style="padding: 20px 60px; font-size: 1.5em;">
+                🎮 开始游戏
+            </button>
+        </div>
     </div>
 
     <!-- 游戏界面（初始隐藏） -->
