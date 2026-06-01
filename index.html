@@ -380,7 +380,18 @@
     </style>
 </head>
 <body>
-    <div class="game-container">
+    <!-- 开始界面 -->
+    <div class="game-container" id="start-screen">
+        <h1>🐰 小动物数数乐园 🐱</h1>
+        <div style="font-size: 4em; margin: 30px;">🎵</div>
+        <p style="font-size: 1.5em; color: #667eea; margin-bottom: 30px;">点击开始游戏！</p>
+        <button class="option-btn" onclick="startGame()" style="padding: 20px 60px; font-size: 1.5em;">
+            🎮 开始游戏
+        </button>
+    </div>
+
+    <!-- 游戏界面（初始隐藏） -->
+    <div class="game-container" id="game-screen" style="display: none;">
         <h1>🐰 小动物数数乐园 🐱</h1>
 
         <div class="score-board">
@@ -414,12 +425,24 @@
         // 背景音乐
         const backgroundMusic = new Audio('backgroundmusicforvideos-happy-cute-kids-522388.mp3');
         backgroundMusic.loop = true;
-        backgroundMusic.volume = 0.3; // 音量 30%
+        backgroundMusic.volume = 0.5; // 音量 50%
 
-        // 尝试播放音乐
-        backgroundMusic.play().catch(err => {
-            console.log('音频自动播放失败:', err);
-        });
+        // 开始游戏（播放音乐）
+        function startGame() {
+            // 播放音乐
+            backgroundMusic.play().then(() => {
+                console.log('音乐开始播放');
+            }).catch(err => {
+                console.log('音频播放失败:', err);
+            });
+
+            // 隐藏开始界面，显示游戏界面
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'block';
+
+            // 开始游戏
+            generateQuestion();
+        }
 
         // 生成随机数
         function getRandomNumber(min, max) {
@@ -543,8 +566,11 @@
             `;
 
             container.innerHTML = `
-                <button class="option-btn" onclick="restartGame()" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                <button class="option-btn" onclick="restartGame()" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); margin-right: 10px;">
                     🎮 再玩一次
+                </button>
+                <button class="option-btn" onclick="showStartScreen()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    🏠 回到首页
                 </button>
             `;
 
@@ -562,6 +588,12 @@
             document.getElementById('message').className = 'message';
             document.getElementById('next-btn').style.display = 'none';
             generateQuestion();
+        }
+
+        // 显示开始界面
+        function showStartScreen() {
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('start-screen').style.display = 'block';
         }
 
         // 创建彩带效果
