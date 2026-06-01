@@ -13,12 +13,39 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(to bottom, #87CEEB 0%, #B0E0E6 50%, #90EE90 50%, #228B22 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            position: relative;
+        }
+
+        /* 云朵装饰 */
+        .cloud {
+            position: fixed;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: cloud-float 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes cloud-float {
+            from { transform: translateX(-100px); }
+            to { transform: translateX(100vw); }
+        }
+
+        .grass {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(to top, #228B22 0%, #32CD32 50%, #90EE90 100%);
+            border-radius: 50% 50% 0 0 / 20% 20% 0 0;
+            pointer-events: none;
         }
 
         .game-container {
@@ -127,15 +154,29 @@
         }
 
         .plus-sign {
-            font-size: 1.5em;
-            color: #667eea;
+            font-size: 3em;
+            color: #FF6B6B;
             font-weight: bold;
+            text-shadow: 3px 3px 0px #FFE66D, 6px 6px 10px rgba(0,0,0,0.2);
+            animation: plus-bounce 1s ease-in-out infinite;
         }
 
         .equals-sign {
-            font-size: 1.5em;
-            color: #667eea;
+            font-size: 3em;
+            color: #4ECDC4;
             font-weight: bold;
+            text-shadow: 3px 3px 0px #FFE66D, 6px 6px 10px rgba(0,0,0,0.2);
+            animation: equals-bounce 1s ease-in-out infinite;
+        }
+
+        @keyframes plus-bounce {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(10deg); }
+        }
+
+        @keyframes equals-bounce {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(-10deg); }
         }
 
         .options {
@@ -240,6 +281,123 @@
             }
         }
     </style>
+    <!-- 移动端适配 -->
+    <style>
+        /* 手机端适配 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .game-container {
+                padding: 20px 15px;
+                border-radius: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+                margin-bottom: 15px;
+            }
+
+            .score-board {
+                font-size: 1.1em;
+                padding: 12px 20px;
+                margin-bottom: 15px;
+            }
+
+            .question {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+
+            .number-display {
+                font-size: 1.2em;
+                gap: 10px;
+            }
+
+            .animal-group {
+                padding: 15px;
+                min-width: 90px;
+            }
+
+            .animal-emoji {
+                font-size: 2em;
+                margin: 3px;
+            }
+
+            .plus-sign, .equals-sign {
+                font-size: 1.2em;
+            }
+
+            .options {
+                gap: 10px;
+            }
+
+            .option-btn {
+                padding: 15px 25px;
+                font-size: 1.5em;
+                min-width: 80px;
+            }
+
+            .message {
+                font-size: 1.3em;
+                margin-top: 20px;
+            }
+
+            .next-btn {
+                padding: 12px 40px;
+                font-size: 1.2em;
+                margin-top: 15px;
+            }
+
+            #music-btn {
+                padding: 8px 15px !important;
+                font-size: 0.9em !important;
+            }
+        }
+
+        /* 小屏手机适配 */
+        @media (max-width: 480px) {
+            .game-container {
+                padding: 15px 10px;
+                border-radius: 15px;
+            }
+
+            h1 {
+                font-size: 1.3em;
+            }
+
+            .score-board {
+                font-size: 1em;
+                padding: 10px 15px;
+            }
+
+            .animal-emoji {
+                font-size: 1.8em;
+                margin: 2px;
+            }
+
+            .animal-group {
+                padding: 10px;
+                min-width: 70px;
+            }
+
+            .option-btn {
+                padding: 12px 20px;
+                font-size: 1.3em;
+                min-width: 70px;
+            }
+
+            .message {
+                font-size: 1.1em;
+            }
+
+            .next-btn {
+                padding: 10px 30px;
+                font-size: 1em;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="game-container">
@@ -281,10 +439,21 @@
         const animations = ['bounce', 'wiggle', 'hop', 'spin', 'swing'];
 
         // 背景音乐
-        let musicPlaying = false;
+        let musicPlaying = true;
         const backgroundMusic = new Audio('backgroundmusicforvideos-happy-cute-kids-522388.mp3');
         backgroundMusic.loop = true;
         backgroundMusic.volume = 0.3; // 音量 30%
+
+        // 尝试播放音乐
+        backgroundMusic.play().then(() => {
+            musicPlaying = true;
+            document.getElementById('music-btn').textContent = '🔊 音乐开';
+        }).catch(err => {
+            // 如果自动播放失败，显示关闭状态
+            console.log('音频自动播放失败:', err);
+            musicPlaying = false;
+            document.getElementById('music-btn').textContent = '🔇 音乐关';
+        });
 
         // 切换音乐开关
         function toggleMusic() {
@@ -325,13 +494,9 @@
             const animation1 = animations[getRandomNumber(0, animations.length - 1)];
             const animation2 = animations[getRandomNumber(0, animations.length - 1)];
 
-            // 显示进度
-            const progressText = `<div style="color: #667eea; font-size: 0.5em; margin-bottom: 10px;">第 ${currentQuestionNum} / ${totalQuestions} 题</div>`;
-
             // 显示问题
             const display = document.getElementById('question-display');
             display.innerHTML = `
-                ${progressText}
                 <div class="animal-group">
                     ${Array(num1).fill(`<span class="animal-emoji animal-${animation1}">${animal}</span>`).join('')}
                 </div>
